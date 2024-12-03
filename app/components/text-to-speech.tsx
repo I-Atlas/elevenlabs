@@ -21,8 +21,16 @@ const TextToSpeech: React.FC = () => {
   const [audioData, setAudioData] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [voices, setVoices] = useState<Voice[]>([]);
+  const [totalCharactersUsed, setTotalCharactersUsed] = useState<number>(0);
 
-  const disabled = isGenerating || !debouncedApiKey || !selectedVoice;
+  const maxCharactersPerUser = 10000;
+  const maxCharactersPerText = 5000;
+
+  const disabled =
+    isGenerating ||
+    !debouncedApiKey ||
+    !selectedVoice ||
+    totalCharactersUsed >= maxCharactersPerUser;
 
   useEffect(() => {
     const fetchVoices = async () => {
@@ -48,6 +56,11 @@ const TextToSpeech: React.FC = () => {
     };
 
     fetchVoices();
+  }, [debouncedApiKey]);
+
+  useEffect(() => {
+    // Reset character count when API key changes
+    setTotalCharactersUsed(0);
   }, [debouncedApiKey]);
 
   const handleGenerateAudio = useCallback(async () => {
@@ -76,6 +89,9 @@ const TextToSpeech: React.FC = () => {
       audio.onended = () => setIsPlaying(false);
       audio.play();
       setIsPlaying(true);
+
+      // Update total characters used
+      setTotalCharactersUsed((prev) => prev + text.length);
     } catch (error) {
       setError(String(error) || "An unknown error occurred");
     } finally {
@@ -159,10 +175,18 @@ const TextToSpeech: React.FC = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="What do you want the model to say?"
-            className="w-full h-32 p-2 border rounded-md resize-none"
+            className="w-full p-2 border rounded-md resize-none"
             aria-label="Enter Text"
+            style={{ height: "60vh" }}
+            maxLength={maxCharactersPerText}
             disabled={disabled}
           />
+          <div className="text-sm text-gray-500 mt-1">
+            {`Characters in text: ${text.length}/${maxCharactersPerUser}`}
+          </div>
+          <div className="text-sm text-gray-500 mt-1">
+            {`Characters used: ${totalCharactersUsed}/${maxCharactersPerUser}`}
+          </div>
         </div>
 
         {error && (
