@@ -10,33 +10,35 @@ interface VoiceSelectProps {
 }
 
 export const VoiceSelect: FC<VoiceSelectProps> = ({ apiKey }) => {
+  const form = useTtsFormContext();
   const { data, error, isSuccess } = useQuery({
     queryKey: ["voices", apiKey],
     queryFn: async () => {
-      let presettedVoiceId = "";
-      if (!!form.values.voicePresetId) {
-        const [name, publicUserId, publicVoiceId] =
+      const voices = await getVoices({ apiKey });
+      const preselectedVoice = voices?.find(
+        (voice) => voice.name === form.values.voicePresetId?.split("|")?.[0],
+      );
+      if (form.values.voicePresetId && !preselectedVoice) {
+        const [name, publicVoiceId, publicUserId] =
           form.values.voicePresetId.split("|");
-        presettedVoiceId = await postAddVoice({
+        const preselectedVoiceId = await postAddVoice({
           apiKey,
           name,
           publicVoiceId,
           publicUserId,
         });
+        return { voices, preselectedVoiceId };
       }
-
-      const voices = await getVoices({ apiKey });
-      return { voices, presettedVoiceId };
+      return { voices, preselectedVoiceId: preselectedVoice?.voice_id ?? "" };
     },
     enabled: !!apiKey,
   });
-  const form = useTtsFormContext();
 
   useEffect(() => {
     if (data) {
       form.setFieldValue(
         "voice",
-        data.presettedVoiceId || data.voices[0]?.voice_id,
+        data.preselectedVoiceId || data.voices[0]?.voice_id,
       );
     }
 

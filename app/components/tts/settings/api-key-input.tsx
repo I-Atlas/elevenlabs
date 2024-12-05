@@ -11,7 +11,7 @@ export const ApiKeyInput: FC = () => {
       radius="xl"
       size="md"
       label="API ключ"
-      description="Необходимо обновлять каждые 10.000 символов"
+      description="Необходимо обновлять каждые 10000 символов"
       {...form.getInputProps("apiKey")}
     />
   );

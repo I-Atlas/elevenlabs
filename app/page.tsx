@@ -35,6 +35,17 @@ export default function Home() {
       similarity: 70,
       voicePresetId: createPresetId(voicePresetData[0]),
     },
+    onValuesChange: (values) => {
+      window.localStorage.setItem(
+        "tts-form",
+        JSON.stringify({
+          apiKey: values.apiKey,
+          stability: values.stability,
+          similarity: values.similarity,
+          voicePresetId: values.voicePresetId,
+        }),
+      );
+    },
   });
   const [debouncedApiKey] = useDebouncedValue(form.values.apiKey, 1000);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -47,6 +58,17 @@ export default function Home() {
   useEffect(() => {
     setTotalCharactersUsed(0);
   }, [debouncedApiKey]);
+
+  useEffect(() => {
+    const storedValue = window.localStorage.getItem("tts-form");
+    if (storedValue) {
+      try {
+        form.setValues(JSON.parse(window.localStorage.getItem("tts-form")!));
+      } catch (error) {
+        console.log((error as Error).message);
+      }
+    }
+  }, []);
 
   return (
     <TtsFormProvider form={form}>
