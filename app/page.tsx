@@ -16,6 +16,11 @@ import { ModelSelect } from "@/app/components/tts/settings/model-select";
 import { IpInfo } from "@/app/components/tts/settings/ip-info";
 import { SimilaritySlider } from "@/app/components/tts/settings/similarity-slider";
 import { StabilitySlider } from "@/app/components/tts/settings/stability-slider";
+import { createPresetId } from "@/app/lib/utils/create-preset-id";
+import {
+  voicePresetData,
+  VoicePresetSelect,
+} from "@/app/components/tts/settings/voice-preset-select";
 
 export default function Home() {
   const [opened, { toggle }] = useDisclosure();
@@ -28,6 +33,7 @@ export default function Home() {
       model: "",
       stability: 60,
       similarity: 70,
+      voicePresetId: createPresetId(voicePresetData[0]),
     },
   });
   const [debouncedApiKey] = useDebouncedValue(form.values.apiKey, 1000);
@@ -67,8 +73,9 @@ export default function Home() {
         <AppShell.Navbar p="md">
           <Stack gap="16px">
             <ApiKeyInput />
-            <VoiceSelect apiKey={debouncedApiKey} />
             <ModelSelect apiKey={debouncedApiKey} />
+            <VoiceSelect apiKey={debouncedApiKey} />
+            <VoicePresetSelect />
             <SimilaritySlider />
             <StabilitySlider />
             <IpInfo />

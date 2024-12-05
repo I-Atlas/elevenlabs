@@ -7,6 +7,7 @@ export type TtsFromValues = {
   model: string;
   stability: number;
   similarity: number;
+  voicePresetId: string;
 };
 
 export type TtsFormTransformValues = (values: {
@@ -16,6 +17,7 @@ export type TtsFormTransformValues = (values: {
   model: string;
   stability: number;
   similarity: number;
+  voicePresetId: string;
 }) => {
   apiKey: string;
   text: string;
@@ -23,6 +25,7 @@ export type TtsFormTransformValues = (values: {
   model: string;
   stability: number;
   similarity: number;
+  voicePresetId: string;
 };
 
 export type TtsForm = UseFormReturnType<TtsFromValues, TtsFormTransformValues>;

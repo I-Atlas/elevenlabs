@@ -95,7 +95,7 @@ export const Actions: FC<ActionsProps> = ({
         radius="xl"
         color="rgba(77, 77, 255, 1)"
       >
-        {isGenerating ? "Generating..." : "Generate"}
+        {isGenerating ? "Генерация..." : "Сгенерировать"}
       </Button>
 
       {audioElement && (

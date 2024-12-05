@@ -1,9 +1,9 @@
 import { Select } from "@mantine/core";
 import React, { FC, useEffect } from "react";
-import { Voice } from "@/app/types/voice";
 import { useTtsFormContext } from "@/app/context/tts-from";
 import { useQuery } from "@tanstack/react-query";
 import { getVoices } from "@/app/lib/api/get.voices";
+import { postAddVoice } from "@/app/lib/api/post.add-voice";
 
 interface VoiceSelectProps {
   apiKey: string;
@@ -12,15 +12,32 @@ interface VoiceSelectProps {
 export const VoiceSelect: FC<VoiceSelectProps> = ({ apiKey }) => {
   const { data, error, isSuccess } = useQuery({
     queryKey: ["voices", apiKey],
-    queryFn: () => getVoices({ apiKey }),
+    queryFn: async () => {
+      let presettedVoiceId = "";
+      if (!!form.values.voicePresetId) {
+        const [name, publicUserId, publicVoiceId] =
+          form.values.voicePresetId.split("|");
+        presettedVoiceId = await postAddVoice({
+          apiKey,
+          name,
+          publicVoiceId,
+          publicUserId,
+        });
+      }
+
+      const voices = await getVoices({ apiKey });
+      return { voices, presettedVoiceId };
+    },
     enabled: !!apiKey,
   });
   const form = useTtsFormContext();
 
   useEffect(() => {
     if (data) {
-      const joeVoice = data.find((voice: Voice) => voice.name === "Joe");
-      form.setFieldValue("voice", joeVoice?.voice_id || data[0]?.voice_id);
+      form.setFieldValue(
+        "voice",
+        data.presettedVoiceId || data.voices[0]?.voice_id,
+      );
     }
 
     if (error) {
@@ -35,7 +52,7 @@ export const VoiceSelect: FC<VoiceSelectProps> = ({ apiKey }) => {
       size="md"
       label="Выбор голоса"
       description="Если в списке нет нужного голоса, его нужно добавить в аккаунт"
-      data={data?.map((voice) => ({
+      data={data?.voices?.map((voice) => ({
         value: voice.voice_id,
         label: voice.name,
       }))}
