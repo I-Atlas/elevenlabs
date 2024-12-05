@@ -1,17 +1,21 @@
 import { Textarea } from "@mantine/core";
 import React, { FC } from "react";
-import { TtsForm } from "@/app/types/form";
 import { MAX_CHARACTERS_PER_GENERATION } from "@/app/constants/tts";
+import { useTtsFormContext } from "@/app/context/tts-from";
 
-interface TtsTextareaProps {
+interface TextAreaProps {
   isDisabled?: boolean;
-  form: TtsForm;
 }
 
-export const TtsTextarea: FC<TtsTextareaProps> = ({ isDisabled, form }) => {
+export const TextArea: FC<TextAreaProps> = () => {
+  const form = useTtsFormContext();
   return (
     <Textarea
-      placeholder="Что вы хотите, чтобы модель сказала?"
+      placeholder={
+        !!form.values.apiKey
+          ? "Что вы хотите, чтобы модель сказала?"
+          : "Чтобы начать, введите API ключ в меню настроек"
+      }
       {...form.getInputProps("text")}
       maxLength={MAX_CHARACTERS_PER_GENERATION}
       minRows={10}

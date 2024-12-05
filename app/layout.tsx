@@ -1,6 +1,7 @@
 import "@mantine/core/styles.css";
 
 import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
+import ReactQueryProvider from "@/app/context/react-query";
 
 const theme = createTheme({
   primaryColor: "violet",
@@ -22,7 +23,9 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <ReactQueryProvider>
+          <MantineProvider theme={theme}>{children}</MantineProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

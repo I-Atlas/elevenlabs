@@ -1,27 +1,27 @@
 import { ActionIcon, Button, Group } from "@mantine/core";
 import React, { FC, useCallback, useState } from "react";
-import { TtsForm } from "@/app/types/form";
 import {
   IconDownload,
   IconPlayerPause,
   IconPlayerPlay,
 } from "@tabler/icons-react";
+import { useTtsFormContext } from "@/app/context/tts-from";
+import { useMutation } from "@tanstack/react-query";
+import { postTts } from "@/app/lib/api/post.tts";
 
-interface TtsActionsProps {
+interface ActionsProps {
   isDisabled?: boolean;
   isGenerating?: boolean;
 
   apiKey: string;
-  form: TtsForm;
 
   setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>;
   setTotalCharactersUsed: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const TtsActions: FC<TtsActionsProps> = ({
+export const Actions: FC<ActionsProps> = ({
   isDisabled,
   isGenerating,
-  form,
   apiKey,
   setIsGenerating,
   setTotalCharactersUsed,
@@ -30,45 +30,39 @@ export const TtsActions: FC<TtsActionsProps> = ({
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
     null,
   );
+  const form = useTtsFormContext();
   const [audioData, setAudioData] = useState<string | null>(null);
-  const handleGenerateAudio = useCallback(async () => {
-    if (!form.values.text.trim()) return;
-    setIsGenerating(true);
-    form.setFieldError("text", undefined);
-    try {
-      const response = await fetch("/api/text-to-speech", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: apiKey,
-        },
-        body: JSON.stringify({
-          text: form.values.text,
-          voice: form.values.selectedVoice,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to generate audio");
-      }
-
-      const audio = new Audio(`data:audio/mpeg;base64,${data.audio}`);
+  const { mutate } = useMutation({
+    mutationKey: ["voices"],
+    mutationFn: () =>
+      postTts({
+        text: form.values.text,
+        voiceId: form.values.voice,
+        modelId: form.values.model,
+        stability: form.values.stability / 10,
+        similarity: form.values.similarity / 10,
+        apiKey,
+      }),
+    onSuccess: (data) => {
+      const audio = new Audio(`data:audio/mpeg;base64,${data}`);
       setAudioElement(audio);
-      setAudioData(data.audio);
+      setAudioData(data);
 
       audio.onended = () => setIsPlaying(false);
       audio.play();
       setIsPlaying(true);
 
       setTotalCharactersUsed((prev) => prev + form.values.text.length);
-    } catch (error) {
-      form.setFieldError("text", String(error) || "An unknown error occurred");
-    } finally {
       setIsGenerating(false);
-    }
-  }, [form.values.text, form.values.selectedVoice, apiKey]);
+    },
+    onError: (error) => {
+      form.setFieldError(
+        "text",
+        String(error.message) || "An unknown error occurred",
+      );
+      setIsGenerating(false);
+    },
+  });
 
   const handlePlayPause = useCallback(() => {
     if (!audioElement) return;
@@ -89,10 +83,11 @@ export const TtsActions: FC<TtsActionsProps> = ({
     link.click();
     document.body.removeChild(link);
   }, [audioData]);
+
   return (
     <Group justify="center" grow gap="16px">
       <Button
-        onClick={handleGenerateAudio}
+        onClick={() => mutate()}
         disabled={!form.values.text.trim() || isDisabled}
         loading={isGenerating}
         variant="filled"
@@ -103,7 +98,7 @@ export const TtsActions: FC<TtsActionsProps> = ({
         {isGenerating ? "Generating..." : "Generate"}
       </Button>
 
-      {
+      {audioElement && (
         <>
           <ActionIcon
             size="xl"
@@ -124,7 +119,7 @@ export const TtsActions: FC<TtsActionsProps> = ({
             <IconDownload />
           </ActionIcon>
         </>
-      }
+      )}
     </Group>
   );
 };
