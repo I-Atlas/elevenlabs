@@ -38,6 +38,19 @@ export const TtsSettings: FC<TtsSettingsProps> = ({
         {...form.getInputProps("selectedVoice")}
         disabled={isDisabled}
       />
+      {/*<Select*/}
+      {/*  color="rgba(77, 77, 255, 1)"*/}
+      {/*  radius="xl"*/}
+      {/*  size="md"*/}
+      {/*  label="Выбор модели"*/}
+      {/*  description="Если в списке нет нужного голоса, его нужно добавить в аккаунт"*/}
+      {/*  data={voices.map((voice) => ({*/}
+      {/*    value: voice.voice_id,*/}
+      {/*    label: voice.name,*/}
+      {/*  }))}*/}
+      {/*  {...form.getInputProps("selectedVoice")}*/}
+      {/*  disabled={isDisabled}*/}
+      {/*/>*/}
     </Stack>
   );
 };

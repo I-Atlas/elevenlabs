@@ -14,14 +14,14 @@ export const TtsTextarea: FC<TtsTextareaProps> = ({ isDisabled, form }) => {
       placeholder="Что вы хотите, чтобы модель сказала?"
       {...form.getInputProps("text")}
       maxLength={MAX_CHARACTERS_PER_GENERATION}
-      disabled={isDisabled}
       minRows={10}
       variant="unstyled"
       size="lg"
       w="100%"
+      radius="xs"
       styles={{
         input: {
-          height: "calc(100vh - 220px)",
+          height: "calc(100vh - 192px)",
           border: "none",
         },
       }}

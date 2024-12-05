@@ -1,6 +1,6 @@
 "use client";
 
-import { AppShell, Burger, Group, Stack, Text } from "@mantine/core";
+import { AppShell, Burger, Group, Stack, Text, Title } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { TtsTextarea } from "./components/tts-textarea";
 import { useForm } from "@mantine/form";
@@ -77,7 +77,7 @@ export default function Home() {
       <AppShell.Header>
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-          TTS через 11Labs API
+          <Title fz={18}>TTS ElevenLabs</Title>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
@@ -86,17 +86,6 @@ export default function Home() {
       <AppShell.Main>
         <Stack gap="16px">
           <TtsTextarea isDisabled={isDisabled} form={form} />
-          <Stack gap="4px">
-            <Text
-              c="dimmed"
-              size="md"
-            >{`Символов в тексте: ${form.values.text.length}/${MAX_CHARACTERS_PER_GENERATION}`}</Text>
-            <Text
-              c="dimmed"
-              size="md"
-            >{`Символов использовано: ${totalCharactersUsed}/${MAX_CHARACTERS_PER_API_KEY}`}</Text>
-          </Stack>
-
           <TtsActions
             apiKey={debouncedApiKey}
             form={form}
@@ -105,6 +94,15 @@ export default function Home() {
             isDisabled={isDisabled}
             isGenerating={isGenerating}
           />
+          <Group gap="4px" justify="space-between" align="center">
+            <Text c="dimmed" size="md">
+              {MAX_CHARACTERS_PER_API_KEY - totalCharactersUsed} символов
+              осталось
+            </Text>
+            <Text c="dimmed" size="md">
+              {form.values.text.length}/{MAX_CHARACTERS_PER_GENERATION}
+            </Text>
+          </Group>
         </Stack>
       </AppShell.Main>
     </AppShell>

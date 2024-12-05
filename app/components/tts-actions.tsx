@@ -1,6 +1,11 @@
-import { Button, Group } from "@mantine/core";
+import { ActionIcon, Button, Group } from "@mantine/core";
 import React, { FC, useCallback, useState } from "react";
 import { TtsForm } from "@/app/types/form";
+import {
+  IconDownload,
+  IconPlayerPause,
+  IconPlayerPlay,
+} from "@tabler/icons-react";
 
 interface TtsActionsProps {
   isDisabled?: boolean;
@@ -98,30 +103,28 @@ export const TtsActions: FC<TtsActionsProps> = ({
         {isGenerating ? "Generating..." : "Generate"}
       </Button>
 
-      {audioElement && (
+      {
         <>
-          <Button
-            variant="filled"
-            size="md"
+          <ActionIcon
+            size="xl"
             radius="xl"
             onClick={handlePlayPause}
             disabled={isDisabled}
             color="rgba(206, 255, 0, 1)"
           >
-            {isPlaying ? "Pause" : "Play"}
-          </Button>
-          <Button
-            variant="filled"
-            size="md"
+            {isPlaying ? <IconPlayerPause /> : <IconPlayerPlay />}
+          </ActionIcon>
+          <ActionIcon
+            size="xl"
             radius="xl"
             onClick={handleDownload}
             disabled={isDisabled}
             color="rgba(206, 255, 0, 1)"
           >
-            Download
-          </Button>
+            <IconDownload />
+          </ActionIcon>
         </>
-      )}
+      }
     </Group>
   );
 };
