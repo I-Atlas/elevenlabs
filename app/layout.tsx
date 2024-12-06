@@ -8,8 +8,8 @@ const theme = createTheme({
 });
 
 export const metadata = {
-  title: "TTS from 11Labs",
-  description: "Use TTS API from 11Labs without restrictions",
+  title: "TTS ElevenLabs",
+  description: "Use TTS API from ElevenLabs without restrictions",
 };
 
 export default function RootLayout({

@@ -117,7 +117,11 @@ export const Actions: FC<ActionsProps> = ({
             disabled={isDisabled}
             color="rgba(206, 255, 0, 1)"
           >
-            {isPlaying ? <IconPlayerPause /> : <IconPlayerPlay />}
+            {isPlaying ? (
+              <IconPlayerPause color="#000" />
+            ) : (
+              <IconPlayerPlay color="#000" />
+            )}
           </ActionIcon>
           <ActionIcon
             size="xl"
@@ -126,7 +130,7 @@ export const Actions: FC<ActionsProps> = ({
             disabled={isDisabled}
             color="rgba(206, 255, 0, 1)"
           >
-            <IconDownload />
+            <IconDownload color="#000" />
           </ActionIcon>
         </>
       )}
