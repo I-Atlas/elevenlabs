@@ -50,7 +50,6 @@ export default function Home() {
   const [debouncedApiKey] = useDebouncedValue(form.values.apiKey, 1000);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const isDisabled =
-    isGenerating ||
     !debouncedApiKey ||
     !form.values.voice ||
     totalCharactersUsed >= MAX_CHARACTERS_PER_API_KEY;
@@ -107,6 +106,7 @@ export default function Home() {
           <Stack gap="16px">
             <TextArea />
             <Actions
+              isGenerating={isGenerating}
               isDisabled={isDisabled}
               apiKey={debouncedApiKey}
               setIsGenerating={setIsGenerating}

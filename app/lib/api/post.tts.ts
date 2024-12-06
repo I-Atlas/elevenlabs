@@ -39,11 +39,18 @@ export const postTts = async ({
       },
     );
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      const errorMessage =
+        errorData.detail?.message || "An unknown error occurred";
+      throw new Error(errorMessage);
+    }
+
     const audioBuffer = await response.arrayBuffer();
     return Buffer.from(audioBuffer).toString("base64");
   } catch (error) {
     const errorMessage =
-      (error as Error)?.message || "An unknown error occurred";
+      error instanceof Error ? error.message : "An unknown error occurred";
     throw new Error(errorMessage);
   }
 };

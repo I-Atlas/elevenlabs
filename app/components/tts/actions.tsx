@@ -1,5 +1,5 @@
 import { ActionIcon, Button, Group } from "@mantine/core";
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import {
   IconDownload,
   IconPlayerPause,
@@ -34,15 +34,17 @@ export const Actions: FC<ActionsProps> = ({
   const [audioData, setAudioData] = useState<string | null>(null);
   const { mutate } = useMutation({
     mutationKey: ["voices"],
-    mutationFn: () =>
-      postTts({
+    mutationFn: () => {
+      setIsGenerating(true);
+      return postTts({
         text: form.values.text,
         voiceId: form.values.voice,
         modelId: form.values.model,
-        stability: form.values.stability / 10,
-        similarity: form.values.similarity / 10,
+        stability: form.values.stability / 100,
+        similarity: form.values.similarity / 100,
         apiKey,
-      }),
+      });
+    },
     onSuccess: (data) => {
       const audio = new Audio(`data:audio/mpeg;base64,${data}`);
       setAudioElement(audio);
@@ -83,6 +85,14 @@ export const Actions: FC<ActionsProps> = ({
     link.click();
     document.body.removeChild(link);
   }, [audioData]);
+
+  useEffect(() => {
+    if (!form.values.text.trim()) {
+      setAudioData(null);
+      setAudioElement(null);
+      setIsPlaying(false);
+    }
+  }, [form.values.text]);
 
   return (
     <Group justify="center" grow gap="16px">
