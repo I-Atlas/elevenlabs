@@ -19,13 +19,13 @@ export const VoiceSelect: FC<VoiceSelectProps> = ({ apiKey }) => {
         (voice) => voice.name === form.values.voicePresetId?.split("|")?.[0],
       );
       if (form.values.voicePresetId && !preselectedVoice) {
-        const [name, publicVoiceId, publicUserId] =
+        const [name, publicUserId, publicVoiceId] =
           form.values.voicePresetId.split("|");
         const preselectedVoiceId = await postAddVoice({
           apiKey,
           name,
-          publicVoiceId,
           publicUserId,
+          publicVoiceId,
         });
         return { voices, preselectedVoiceId };
       }
