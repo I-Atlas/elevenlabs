@@ -9,7 +9,7 @@ const theme = createTheme({
 
 export const metadata = {
   title: "TTS ElevenLabs",
-  description: "Use TTS API from ElevenLabs without restrictions",
+  description: "Use TTS API from ElevenLabs without restrictions!",
 };
 
 export default function RootLayout({
